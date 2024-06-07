@@ -1,0 +1,14 @@
+1 - Abrir un CMD de Windows. (NO un powershell, tiene que ser Command Prompt)
+2 - Navegar hasta donde esta instalado PostgreSQL (Tiende a ser Program Files/PostgreSQL/16/bin)
+3 = Correr los comandos:
+3.1 - psql postgres postgres
+3.2 - (Introducir tu password de postgres)
+3.3 - Ya estas en la consola de postgres!
+
+Ya se puede hacer:
+5 - Tu DBVisualizer (O lo que uses) tiene que estar conectado a la misma base de datos. Se puede usar \c en la consola para ver en que BD estas.
+5.1 - Si es necesario crear una nueva conexion en tu dbvisualizer con postgres como usuario y tu password como password.
+6 - En DBV crear la tabla aula_examen con CREATE TABLE aula_examen(nroAula int, fecha_hora date, duracion INTERVAL, codMateria VARCHAR(10), confirmado BOOLEAN);
+7 - Ya se puede correr \COPY aula_examen(nroAula, fecha_hora, duracion, codMateria) from pedido_aula.csv header delimiter ';'
+	(Le TENGO que pasar con parentesis porque aula_examen tiene mas columnas que pedido_aula.). Tiene que decir COPY 139 en el prompt 		de postgres.
+8 - Correr un select * from aula_examen para verificar que se copio todo. La ultima columna debe ser toda NULL.
