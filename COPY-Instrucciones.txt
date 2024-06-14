@@ -12,3 +12,4 @@ Ya se puede hacer:
 7 - Ya se puede correr \COPY aula_examen(nroAula, fecha_hora, duracion, codMateria) from pedido_aula.csv header delimiter ';'
 	(Le TENGO que pasar con parentesis porque aula_examen tiene mas columnas que pedido_aula.). Tiene que decir COPY 139 en el prompt 		de postgres.
 8 - Correr un select * from aula_examen para verificar que se copio todo. La ultima columna debe ser toda NULL.
+9 - Para llamar a la funcion se debe escribir, por ejemplo "select * from analisis_asignaciones('2024-12-01 00:00:00');"
