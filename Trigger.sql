@@ -112,10 +112,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Drop the function if it exists
+
 DROP FUNCTION IF EXISTS analisis_asignaciones(dia_hora TIMESTAMP);
 
--- Create the function
+
 CREATE OR REPLACE FUNCTION analisis_asignaciones(dia_hora TIMESTAMP)
 RETURNS TABLE (
     "Variable" VARCHAR(20),
@@ -127,33 +127,32 @@ DECLARE
     tiene_confirmadas BOOLEAN;
     tiene_no_confirmadas BOOLEAN;
     linea_record RECORD;
-    nro_linea BIGINT := 0; -- Variable for row number
+    nro_linea BIGINT := 0;
 BEGIN
-    -- Check if there are confirmed assignments after the given date and time
+ 
     SELECT EXISTS (
         SELECT *
         FROM aula_examen
         WHERE confirmado = TRUE AND fecha_hora >= dia_hora
     ) INTO tiene_confirmadas;
 
-    -- Check if there are unconfirmed assignments after the given date and time
+
     SELECT EXISTS (
         SELECT *
         FROM aula_examen
         WHERE confirmado = FALSE AND fecha_hora >= dia_hora
     ) INTO tiene_no_confirmadas;
 
-    -- Only proceed if there are confirmed or unconfirmed assignments
+
     IF tiene_confirmadas OR tiene_no_confirmadas THEN
-        -- Print the report title
         RAISE NOTICE '----------------------------------------';
         RAISE NOTICE '    ANALISIS DE ASIGNACIONES    ';
         RAISE NOTICE '----------------------------------------';
 
-        -- Print column headers
+
         RAISE NOTICE '%------%------------%-----------%', 'Variable', 'Fecha', 'Horas', 'Nro Linea';
 
-        -- Para las asignaciones confirmadas
+
         IF tiene_confirmadas THEN
             FOR linea_record IN
                 SELECT
@@ -165,14 +164,14 @@ BEGIN
                 GROUP BY codmateria, Fecha
                 ORDER BY codmateria, AVG(duracion) DESC
             LOOP
-                nro_linea := nro_linea + 1; -- Increment row number
+                nro_linea := nro_linea + 1; 
                 RAISE NOTICE 'Materia: %      %         %        %', linea_record.Variable, linea_record.Fecha, linea_record.Horas, nro_linea;
             END LOOP;
         END IF;
 
         RAISE NOTICE '---------------------------------------------------------';
         
-        -- Para las asignaciones no confirmadas
+
         IF tiene_no_confirmadas THEN
             FOR linea_record IN
                 SELECT
@@ -183,12 +182,12 @@ BEGIN
                 WHERE confirmado = FALSE AND fecha_hora >= dia_hora
                 ORDER BY nroaula, fecha_hora
             LOOP
-                nro_linea := nro_linea + 1; -- Increment row number
-                -- Calculate end time of the interval
+                nro_linea := nro_linea + 1; 
+
                 DECLARE
                     end_time TIMESTAMP := linea_record.fecha_hora + linea_record.Horas;
                 BEGIN
-                    -- Print in the desired format "start_time a end_time"
+ 
                     RAISE NOTICE 'Aula: %   %   %    a     %        %',
                                  linea_record.Variable,
                                  TO_CHAR(DATE_TRUNC('day', linea_record.fecha_hora), 'YYYY-MM-DD'),
@@ -226,3 +225,4 @@ INSERT INTO aula_examen VALUES (10, '10/10/2024 10:00:00','3:00:00','78',FALSE);
 select * from aula_examen;
 
 SELECT * FROM analisis_asignaciones('2024-06-14 08:00:00');
+w
